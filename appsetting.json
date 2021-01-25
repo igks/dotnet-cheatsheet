@@ -1,0 +1,17 @@
+{
+  "LoginAD": false,
+  "Domain": "AD Domain",
+  "AppSettings": {
+    "Token": "secretkeyforjwt"
+  },
+  "ConnectionStrings": {
+    "DbConnection": "Server=localhost,1433;Database=DBName;Trusted_Connection=True;",
+    "DbConnection2":"Server=localhost;Database=DBName;User=sa;Password=Admin!23;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
