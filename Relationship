@@ -1,0 +1,139 @@
+//DbContext
+namespace EFCoreRelationshipsExamples
+{
+    public class EFCoreRelationshipsExamplesDbContext : DbContext
+    {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=EFCoreRelationshipsExamples;Trusted_Connection=True;MultipleActiveResultSets=true");
+        }
+    }
+}
+
+//One to Many
+//Entity Model
+namespace EFCoreRelationshipsExamples.Models.OneToMany
+{
+    public class Student
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        /* EF Relation */
+        public Course Course { get; set; }
+    }
+}
+
+namespace EFCoreRelationshipsExamples.Models.OneToMany
+{
+    public class Course
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        /* EF Relations */
+        public IEnumerable<Student> Students { get; set; }
+    }
+}
+
+private void OneToManyRelationshipConfiguration(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Course>()
+        .HasMany(c => c.Students)
+        .WithOne(s => s.Course)
+        .IsRequired();
+}
+//OR//
+private void OneToManyRelationshipConfiguration(ModelBuilder modelBuilder)
+{
+modelBuilder.Entity<Student>()
+   .HasOne(s => s.Course)
+   .WithMany(c => c.Students)
+}
+
+/////////// Many to Many //////////////
+namespace EFCoreRelationshipsExamples.Models.ManyToMany
+{
+    public class Actor
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        /* EF Relations */
+        public List<ActorMovie> ActorMovies { get; set; }
+    }
+}
+
+namespace EFCoreRelationshipsExamples.Models.ManyToMany
+{
+    public class Movie
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        /* EF Relations */
+        public List<ActorMovie> ActorMovies { get; set; }
+    }
+}
+
+namespace EFCoreRelationshipsExamples.Models.ManyToMany
+{
+    public class ActorMovie
+    {
+        public int ActorId { get; set; }
+        public Actor Actor { get; set; }
+
+        public int MovieId { get; set; }
+        public Movie Movie { get; set; }
+    }
+}
+
+private void ManyToManyRelationshipConfiguration(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<ActorMovie>()
+        .HasKey(t => new { t.ActorId, t.MovieId });
+
+    modelBuilder.Entity<ActorMovie>()
+        .HasOne(am => am.Actor)
+        .WithMany(a => a.ActorMovies)
+        .HasForeignKey(am => am.ActorId);
+
+    modelBuilder.Entity<ActorMovie>()
+        .HasOne(am => am.Movie)
+        .WithMany(m => m.ActorMovies)
+        .HasForeignKey(am => am.MovieId);
+}
+
+/////////// One to One /////////
+namespace EFCoreRelationshipsExamples.Models.OneToOne
+{
+    public class Author
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        /* EF Relation */
+        public AuthorBiography Biography { get; set; }
+    }
+}
+
+namespace EFCoreRelationshipsExamples.Models.OneToOne
+{
+    public class AuthorBiography
+    {
+        public int Id { get; set; }
+        public string PlaceOfBirth { get; set; }
+
+        // The AuthorId property is the Foreign Key
+        public int AuthorId { get; set; }
+        public Author Author { get; set; }
+    }
+}
+
+private void OneToOneRelationshipConfiguration(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Author>()
+        .HasOne(a => a.Biography)
+        .WithOne(b => b.Author)
+        .HasForeignKey<AuthorBiography>(b => b.AuthorId);
+}
